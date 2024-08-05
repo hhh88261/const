@@ -1,0 +1,127 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <string>
+#include <stdlib.h>
+#pragma warning ( disable : 4996 )
+
+using namespace std;
+
+int hashGetIndex(char key[]);
+void makeHash(char buffer[100]);
+void searchWord();
+
+//영어 단어 구조체
+
+typedef struct english {
+	char word[50]; //단어
+	char mean[100]; //뜻
+	struct english* chain = NULL; //충돌을 대비한 체인 포인터
+}ENGLISH;
+
+//해시 탐색을 위한 포인터 배열 선언
+
+ENGLISH* englishArray[1200] = {'\0'};
+
+void main() {
+
+	int i = 0, index = 0;
+	ifstream file;
+	char buffer[100];
+	file.open("english1200.txt");
+
+	if (!file.is_open()) {
+		cout << "파일 열기 실패!" << endl;
+	}
+	while (!file.eof()) {
+		memset(buffer, 0, sizeof(buffer));
+		file.getline(buffer, 100);
+		makeHash(buffer);
+	}
+	searchWord();
+	file.close();
+}
+
+//해시 만들기
+
+void makeHash(char buffer[100]) {
+  
+	char* token = NULL;
+	char tk[] = "\t\n";
+	int index = 0;
+  
+	ENGLISH *tmp = NULL;
+	ENGLISH *current = NULL;
+
+	tmp = (ENGLISH *)malloc(sizeof(ENGLISH));
+	memset(tmp, 0, sizeof(ENGLISH));
+	token = strtok(buffer, tk);
+	strcat(tmp->word, token);
+	token = strtok(NULL, tk);
+	strcat(tmp->mean, token);
+	tmp->chain = NULL;
+	index = hashGetIndex(tmp->word);
+
+	if (englishArray[index] == NULL) {
+		englishArray[index] = tmp;
+	}
+
+	else {
+		current = englishArray[index];
+		while (current->chain != NULL) {
+
+			current = current->chain;
+		}
+		current->chain = tmp;
+	}
+}
+
+int hashGetIndex(char key[]) {
+	int hashKey = 0;
+	int word1 = key[0]; //첫번째 글자의 아스키코드
+	int word2 = key[strlen(key) - 1]; //끝글자의 아스키코드
+	int word3 = strlen(key); //문자열의 길이
+	int word4 = key[strlen(key) / 2]; //가운데 글자의 아스키코드
+
+	hashKey = ((word1 * word4) / word3 + word2) % 1200; //705
+
+	cout << hashKey << endl;
+  
+	return hashKey;
+
+}
+
+//단어 검색 함수
+
+void searchWord() {
+	char input[50] = {'\0'};
+	int index = 0;
+	ENGLISH *tmp = NULL;
+
+	while (1) {
+		cout << "\n\n검색할 단어를 입력해 주세요 (종료: exit) : ";
+		fflush(stdin);
+		cin.getline(input, 50);
+		if (strcmp(input, "exit") != 0) {
+			index = hashGetIndex(input);
+			if (englishArray[index] != NULL) {
+				tmp = englishArray[index];
+				while ((strcmp(tmp->word, input) != 0) && (tmp->chain != NULL)) {
+					tmp = tmp->chain;
+				}
+				if ((tmp->chain == NULL) && (strcmp(tmp->word, input) != 0)) {
+					cout << "일치하는 단어가 없습니다" << endl;
+				} else {
+					cout << "단어 = " << tmp->word << endl;
+					cout << "뜻 = " << tmp->mean << endl;
+				}
+			} else {
+				cout << "일치하는 단어가 없습니다" << endl;
+			}
+		} else {
+			cout << "end" << endl;
+			exit(1);
+
+		}
+	}
+}
