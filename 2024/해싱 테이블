@@ -19,7 +19,7 @@ typedef struct english {
 	struct english* chain = NULL; //충돌을 대비한 체인 포인터
 }ENGLISH;
 
-//해시 탐색을 위한 포인터 배열 선언
+//해시 탐색 포인터 선언
 
 ENGLISH* englishArray[1200] = {'\0'};
 
