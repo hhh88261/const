@@ -8,7 +8,6 @@ class SinglyLinkedList:
     def __init__(self):
         self.head = None
 
-    # 리스트의 끝에 노드 추가
     def append(self, data):
         new_node = Node(data)
         if not self.head:
@@ -19,7 +18,6 @@ class SinglyLinkedList:
             last_node = last_node.next
         last_node.next = new_node
 
-    # 리스트 출력
     def print_list(self):
         current_node = self.head
         while current_node:
@@ -27,14 +25,10 @@ class SinglyLinkedList:
             current_node = current_node.next
         print("None")
 
-
-# 단일 연결 리스트 생성
 sll = SinglyLinkedList()
 
-# 노드 추가
 sll.append(1)
 sll.append(2)
 sll.append(3)
 
-# 리스트 출력
 sll.print_list()
