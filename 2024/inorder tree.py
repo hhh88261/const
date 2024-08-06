@@ -24,5 +24,5 @@ if __name__ == "__main__":
     bt.root.right.left = TreeNode(6)
     bt.root.right.right = TreeNode(7)
 
-    print("중위 순회 결과: ", end="")
+    print("Inorder: ", end="")
     bt.inorder_traversal(bt.root)
